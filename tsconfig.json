@@ -1,0 +1,14 @@
+{
+  "include": ["src/**/*"],
+  "exclude": ["recycle_bin"],
+  "compilerOptions": {
+    "target": "es2016",
+    "module": "commonjs",
+    "outDir": "./dist",
+    "rootDir": "./src",
+    "strict": true,
+    "resolveJsonModule": true,
+    "esModuleInterop": true,
+    "typeRoots": ["./node_modules/@types", "./src/types"]
+  }
+}
