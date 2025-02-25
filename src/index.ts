@@ -1,19 +1,14 @@
 // server.js
-import express, {
-  Request as ExReq,
-  Response as ExRes,
-  NextFunction,
-} from "express";
+import express from "express";
+import cors from "cors";
 import logRoutes from "./routes/logs.js";
+import { corsOptions } from "./config/corsOptions.js";
 
 const app = express();
 const PORT = process.env.PORT || 3000;
 
-app.use((req: ExReq, res: ExRes, next: NextFunction) => {
-  let logString = `New request: ${req.method} ${req.path}`;
-  console.log(logString);
-  next(); // Pass control to the next middleware or route handler
-});
+app.use(cors(corsOptions));
+
 // Route: Return Spark logs as JSON
 app.use("/api/v1/logs", logRoutes);
 
