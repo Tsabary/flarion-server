@@ -1,0 +1,14 @@
+- .env
+- .gitignore
+- generateParquet.js
+- package.json
+- pnpm-lock.yaml
+- src
+  - controllers
+    - fetch-logs.ts
+  - data
+    - logs.parquet
+  - index.ts
+  - routes
+    - logs.ts
+- tsconfig.json
