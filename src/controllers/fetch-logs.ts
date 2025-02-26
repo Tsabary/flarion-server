@@ -9,7 +9,7 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 // Define the logs directory as a constant outside the handler
-const logsDir = path.join(__dirname, "logs");
+const logsDir = path.join(__dirname, "..", "data");
 
 export default async (req: Request, res: Response): Promise<void> => {
   // Parse paging parameters from query with type safety
@@ -26,10 +26,16 @@ export default async (req: Request, res: Response): Promise<void> => {
       : 10;
 
   // Parse filter parameters from query (if provided)
-  const search = typeof req.query.search === "string" ? req.query.search : undefined;
-  const status = typeof req.query.status === "string" ? req.query.status : undefined;
-  const startDate = req.query.startDate ? new Date(req.query.startDate as string) : undefined;
-  const endDate = req.query.endDate ? new Date(req.query.endDate as string) : undefined;
+  const search =
+    typeof req.query.search === "string" ? req.query.search : undefined;
+  const status =
+    typeof req.query.status === "string" ? req.query.status : undefined;
+  const startDate = req.query.startDate
+    ? new Date(req.query.startDate as string)
+    : undefined;
+  const endDate = req.query.endDate
+    ? new Date(req.query.endDate as string)
+    : undefined;
 
   try {
     // Get list of Parquet files in the logs directory
