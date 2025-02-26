@@ -10,7 +10,7 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 // Define the logs directory as a constant outside the handler
-const logsDir = path.join(__dirname, "src", "data");
+const logsDir = path.join(__dirname, "..", "data");
 
 export default async (req: Request, res: Response): Promise<void> => {
   // Parse paging parameters from query with type safety
