@@ -5,7 +5,11 @@ export const corsOptions: CorsOptions = {
     origin: string | undefined,
     callback: (err: Error | null, allow?: boolean | string | string[]) => void
   ) => {
-    if (!origin || origin.startsWith("http://localhost")) {
+    if (
+      !origin ||
+      origin.startsWith("http://localhost") ||
+      origin === "https://flarion-assignment.pages.dev"
+    ) {
       return callback(null, true);
     }
 
