@@ -6,6 +6,7 @@
   "type": "module",
   "scripts": {
     "build": "tsc && pnpm copyfiles -u 1 \"src/data/**/*\" dist",
+    "start": "node ./dist/index.js",
     "dev": "node --loader ts-node/esm ./src/index.ts"
   },
   "keywords": [],
