@@ -15,7 +15,7 @@ const logsDir = path.join(__dirname, "logs");
 export default async (req: Request, res: Response): Promise<void> => {
   // Parse paging parameters from query with type safety
   const pageParam = req.query.page;
-  const pageSizeParam = req.query.pageSize;
+  const pageSizeParam = req.query.size;
 
   const page =
     typeof pageParam === "string" && !isNaN(parseInt(pageParam, 10))
@@ -24,7 +24,7 @@ export default async (req: Request, res: Response): Promise<void> => {
   const pageSize =
     typeof pageSizeParam === "string" && !isNaN(parseInt(pageSizeParam, 10))
       ? parseInt(pageSizeParam, 10)
-      : 3;
+      : 10;
 
   try {
     // Get list of Parquet files in the logs directory
