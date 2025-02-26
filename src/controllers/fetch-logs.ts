@@ -1,34 +1,62 @@
-import { Request as ExReq, Response as ExRes } from "express";
+// controller.ts
+import { Request, Response } from "express";
 import parquet from "parquetjs";
 import path from "path";
 import { fileURLToPath } from "url";
+import fs from "fs";
 
+// Helper for ES modules:
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-export default async (_: ExReq, res: ExRes) => {
+// Define the logs directory as a constant outside the handler
+const logsDir = path.join(__dirname, "logs");
+
+export default async (req: Request, res: Response): Promise<void> => {
+  // Parse paging parameters from query with type safety
+  const pageParam = req.query.page;
+  const pageSizeParam = req.query.pageSize;
+
+  const page =
+    typeof pageParam === "string" && !isNaN(parseInt(pageParam, 10))
+      ? parseInt(pageParam, 10)
+      : 1;
+  const pageSize =
+    typeof pageSizeParam === "string" && !isNaN(parseInt(pageSizeParam, 10))
+      ? parseInt(pageSizeParam, 10)
+      : 3;
+
   try {
-    const filePath = path.join(__dirname, "..", "data", "logs.parquet");
+    // Get list of Parquet files in the logs directory
+    const files = fs
+      .readdirSync(logsDir)
+      .filter((f) => f.endsWith(".parquet"))
+      .sort(); // Assumes file names are sortable (e.g., job-001.parquet, job-002.parquet)
 
-    // Open the Parquet file for reading
-    const reader = await parquet.ParquetReader.openFile(filePath);
+    const totalFiles = files.length;
+    const startIndex = (page - 1) * pageSize;
+    const pageFiles = files.slice(startIndex, startIndex + pageSize);
 
-    // Create a new cursor
-    const cursor = reader.getCursor();
-
-    let record;
-    const allLogs = [];
-
-    // Read all rows
-    while ((record = await cursor.next())) {
-      allLogs.push(record);
+    const logs: any[] = [];
+    // Read each file in the current page
+    for (const file of pageFiles) {
+      const filePath = path.join(logsDir, file);
+      const reader = await parquet.ParquetReader.openFile(filePath);
+      const cursor = reader.getCursor();
+      // Expecting one row per file
+      const log = await cursor.next();
+      await reader.close();
+      logs.push(log);
     }
 
-    await reader.close();
-
-    return res.json(allLogs);
+    res.json({
+      page,
+      pageSize,
+      totalFiles,
+      logs,
+    });
   } catch (error) {
-    console.error("Error reading parquet:", error);
-    return res.status(500).json({ error: "Failed to read logs" });
+    console.error("Error reading logs:", error);
+    res.status(500).json({ error: "Failed to read logs" });
   }
 };
